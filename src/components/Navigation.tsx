@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavigationProps {
   variant?: 'landing' | 'dashboard';
@@ -57,13 +58,16 @@ export const Navigation: React.FC<NavigationProps> = ({ variant = 'landing' }) =
             </Link>
           </div>
 
-          {/* Auth Button */}
-          <Button 
-            onClick={handleAuth}
-            className="btn-mystical"
-          >
-            Log In / Sign Up
-          </Button>
+          {/* Theme Toggle and Auth Button */}
+          <div className="flex items-center space-x-3">
+            <ThemeToggle />
+            <Button 
+              onClick={handleAuth}
+              className="btn-mystical"
+            >
+              Log In / Sign Up
+            </Button>
+          </div>
         </div>
       </div>
     </nav>

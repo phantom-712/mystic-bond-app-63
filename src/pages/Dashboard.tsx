@@ -227,7 +227,7 @@ const Dashboard: React.FC = () => {
                         <p className="font-medium">New connection available!</p>
                         <p className="text-sm text-muted-foreground">Someone with similar interests is waiting to chat</p>
                       </div>
-                      <Button size="sm" className="btn-mystical">
+                      <Button size="sm" className="btn-mystical" onClick={handleConnect}>
                         Connect
                       </Button>
                     </div>
@@ -240,7 +240,7 @@ const Dashboard: React.FC = () => {
                         <p className="font-medium">3 unread messages</p>
                         <p className="text-sm text-muted-foreground">From your active connections</p>
                       </div>
-                      <Button size="sm" variant="outline" className="btn-secondary-mystical">
+                      <Button size="sm" variant="outline" className="btn-secondary-mystical" onClick={handleChat}>
                         View
                       </Button>
                     </div>

@@ -43,8 +43,8 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
                 Back
               </Button>
             ) : (
-              <Link 
-                to="/dashboard" 
+            <Link 
+                to="/" 
                 className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
               >
                 <div className="text-2xl font-heading font-bold text-gradient">
