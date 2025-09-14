@@ -2,6 +2,7 @@ import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTheme } from '@/hooks/useTheme';
 
 // Heart shape function to generate particle positions
 const generateHeartShape = (numPoints: number = 1000) => {
@@ -27,40 +28,48 @@ const generateHeartShape = (numPoints: number = 1000) => {
 
 interface HeartParticlesProps {
   scrollY: number;
+  isLightMode: boolean;
 }
 
-const HeartParticles: React.FC<HeartParticlesProps> = ({ scrollY }) => {
+const HeartParticles: React.FC<HeartParticlesProps> = ({ scrollY, isLightMode }) => {
   const ref = useRef<THREE.Points>(null);
   const positions = useMemo(() => generateHeartShape(800), []);
   
-  // Ethereal gradient colors from warm pinks/oranges to cool blues/teals
+  // Colors based on theme mode
   const colors = useMemo(() => {
     const colorArray = new Float32Array(positions.length);
     for (let i = 0; i < positions.length / 3; i++) {
-      // Create gradient based on particle position
-      const x = positions[i * 3];
-      const y = positions[i * 3 + 1];
-      const gradientFactor = (x + 0.5) / 1.0; // Normalize to 0-1
-      
-      if (gradientFactor < 0.33) {
-        // Warm oranges: hsl(25, 100%, 70%)
-        colorArray[i * 3] = 1.0;      // r
-        colorArray[i * 3 + 1] = 0.6;  // g
-        colorArray[i * 3 + 2] = 0.4;  // b
-      } else if (gradientFactor < 0.66) {
-        // Warm pinks: hsl(330, 100%, 75%)
-        colorArray[i * 3] = 1.0;      // r
-        colorArray[i * 3 + 1] = 0.5;  // g
-        colorArray[i * 3 + 2] = 0.8;  // b
+      if (isLightMode) {
+        // Black dots for light mode
+        colorArray[i * 3] = 0.0;      // r
+        colorArray[i * 3 + 1] = 0.0;  // g
+        colorArray[i * 3 + 2] = 0.0;  // b
       } else {
-        // Cool blues/teals: hsl(180, 100%, 70%)
-        colorArray[i * 3] = 0.4;      // r
-        colorArray[i * 3 + 1] = 0.9;  // g
-        colorArray[i * 3 + 2] = 1.0;  // b
+        // Ethereal gradient colors for other modes
+        const x = positions[i * 3];
+        const y = positions[i * 3 + 1];
+        const gradientFactor = (x + 0.5) / 1.0; // Normalize to 0-1
+        
+        if (gradientFactor < 0.33) {
+          // Warm oranges: hsl(25, 100%, 70%)
+          colorArray[i * 3] = 1.0;      // r
+          colorArray[i * 3 + 1] = 0.6;  // g
+          colorArray[i * 3 + 2] = 0.4;  // b
+        } else if (gradientFactor < 0.66) {
+          // Warm pinks: hsl(330, 100%, 75%)
+          colorArray[i * 3] = 1.0;      // r
+          colorArray[i * 3 + 1] = 0.5;  // g
+          colorArray[i * 3 + 2] = 0.8;  // b
+        } else {
+          // Cool blues/teals: hsl(180, 100%, 70%)
+          colorArray[i * 3] = 0.4;      // r
+          colorArray[i * 3 + 1] = 0.9;  // g
+          colorArray[i * 3 + 2] = 1.0;  // b
+        }
       }
     }
     return colorArray;
-  }, [positions]);
+  }, [positions, isLightMode]);
 
   useFrame((state) => {
     if (ref.current) {
@@ -85,9 +94,10 @@ const HeartParticles: React.FC<HeartParticlesProps> = ({ scrollY }) => {
         transparent
         size={0.06}
         sizeAttenuation={true}
-        vertexColors
-        opacity={0.8}
-        blending={THREE.AdditiveBlending}
+        vertexColors={!isLightMode} // Only use vertex colors for non-light modes
+        color={isLightMode ? "#000000" : undefined} // Black color for light mode
+        opacity={isLightMode ? 0.8 : 0.8}
+        blending={isLightMode ? THREE.NormalBlending : THREE.AdditiveBlending}
       />
     </Points>
   );
@@ -99,6 +109,8 @@ interface ParticleHeartProps {
 
 export const ParticleHeart: React.FC<ParticleHeartProps> = ({ className = "" }) => {
   const [scrollY, setScrollY] = useState(0);
+  const { theme } = useTheme();
+  const isLightMode = theme === 'light';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -117,7 +129,7 @@ export const ParticleHeart: React.FC<ParticleHeartProps> = ({ className = "" }) 
       >
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
-        <HeartParticles scrollY={scrollY} />
+        <HeartParticles scrollY={scrollY} isLightMode={isLightMode} />
       </Canvas>
     </div>
   );
