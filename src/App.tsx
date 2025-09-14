@@ -17,6 +17,7 @@ import AboutPage from "./pages/AboutPage";
 import ProductsPage from "./pages/ProductsPage";
 import SafetyPage from "./pages/SafetyPage";
 import SupportPage from "./pages/SupportPage";
+import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/safety" element={<SafetyPage />} />
           <Route path="/support" element={<SupportPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

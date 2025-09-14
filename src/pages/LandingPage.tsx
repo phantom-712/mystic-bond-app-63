@@ -5,15 +5,42 @@ import { useNavigate } from 'react-router-dom';
 import { Heart, Shield, Users, Sparkles } from 'lucide-react';
 import { ParticleHeart } from '@/components/ParticleHeart';
 import { ProfilePicture } from '@/components/ProfilePicture';
+import { useAuth } from '@/hooks/useAuth';
 import profile4 from '@/assets/profiles/profile4.jpg';
 import profile5 from '@/assets/profiles/profile5.jpg';
 import profile6 from '@/assets/profiles/profile6.jpg';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, signInWithGoogle, signOut } = useAuth();
 
-  const handleJoinWithGoogle = () => {
-    navigate('/onboarding');
+  const handleJoinWithGoogle = async () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      const { error } = await signInWithGoogle();
+      if (!error) {
+        // User will be redirected automatically
+      }
+    }
+  };
+
+  const handleLoginSignup = () => {
+    if (user) {
+      signOut();
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const getUserDisplayName = () => {
+    if (user?.user_metadata?.name) {
+      return user.user_metadata.name.split(' ')[0];
+    }
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'User';
   };
 
   return (
@@ -32,13 +59,23 @@ const LandingPage: React.FC = () => {
               <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed animate-mystical-entrance" style={{ animationDelay: '0.2s' }}>
                 Welcome to SoulMate, where personality comes first. Match, chat, and reveal when you're both ready.
               </p>
-              <Button 
-                onClick={handleJoinWithGoogle}
-                className="btn-mystical text-xl px-12 py-6 animate-mystical-entrance animate-pulse-glow"
-                style={{ animationDelay: '0.4s' }}
-              >
-                Join with Google ✨
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Button 
+                  onClick={handleJoinWithGoogle}
+                  className="btn-mystical text-xl px-12 py-6 animate-mystical-entrance animate-pulse-glow"
+                  style={{ animationDelay: '0.4s' }}
+                >
+                  {user ? `Hello, ${getUserDisplayName()}` : 'Join with Google ✨'}
+                </Button>
+                <Button 
+                  onClick={handleLoginSignup}
+                  variant="outline"
+                  className="text-lg px-8 py-6 animate-mystical-entrance border-primary/30 hover:bg-primary/10"
+                  style={{ animationDelay: '0.6s' }}
+                >
+                  {user ? 'Logged In' : 'Login / Sign Up'}
+                </Button>
+              </div>
             </div>
             <div className="lg:w-1/2 flex justify-center">
               <div className="w-96 h-96 relative">
@@ -177,12 +214,23 @@ const LandingPage: React.FC = () => {
           <p className="text-xl text-muted-foreground mb-8">
             Join thousands who've found meaningful connections beyond the surface
           </p>
-          <Button 
-            onClick={handleJoinWithGoogle}
-            className="btn-mystical text-xl px-12 py-6 animate-pulse-glow"
-          >
-            Start Your Journey ✨
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={handleJoinWithGoogle}
+              className="btn-mystical text-xl px-12 py-6 animate-pulse-glow"
+            >
+              {user ? 'Go to Dashboard ✨' : 'Start Your Journey ✨'}
+            </Button>
+            {!user && (
+              <Button 
+                onClick={handleLoginSignup}
+                variant="outline"
+                className="text-lg px-8 py-6 border-primary/30 hover:bg-primary/10"
+              >
+                Login / Sign Up
+              </Button>
+            )}
+          </div>
         </div>
       </section>
 
