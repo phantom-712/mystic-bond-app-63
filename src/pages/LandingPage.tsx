@@ -78,7 +78,7 @@ const LandingPage: React.FC = () => {
               </div>
             </div>
             <div className="lg:w-1/2 flex justify-center">
-              <div className="w-96 h-96 relative">
+              <div className="w-[500px] h-[500px] relative">
                 <ParticleHeart className="absolute inset-0" />
               </div>
             </div>
